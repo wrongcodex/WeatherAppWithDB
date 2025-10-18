@@ -1,5 +1,6 @@
 package com.example.weatherappwithdb.core.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherappwithdb.core.apis.weatherApi.NetworkResponse
@@ -12,14 +13,16 @@ import kotlinx.coroutines.launch
 
 
 class WeatherViewModel(
-    private val repository: WeatherRepository
+    private val repository : WeatherRepository
 ): ViewModel() {
+
 
     private val _weather = MutableStateFlow<NetworkResponse<WeatherData>?>(null)
     val weather: StateFlow<NetworkResponse<WeatherData>?> = _weather
     fun getData(city: String){
         viewModelScope.launch {
             _weather.value = repository.getWeatherByCity(city)
+            Log.d("abcd", "getDataVM: ${_weather.value}")
         }
     }
 }
