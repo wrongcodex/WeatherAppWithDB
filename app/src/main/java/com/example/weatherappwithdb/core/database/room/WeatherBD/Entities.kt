@@ -8,7 +8,7 @@ import com.example.weatherappwithdb.core.models.weatherApiModel.Condition
 @Entity(tableName = "weather_table")
 data class WeatherEntityLocation(
     @PrimaryKey(autoGenerate = true)
-    val id: Long,
+    val id: Long = 0,
     val country: String,
     val lat: Double,
     val localtime: String,
@@ -22,14 +22,16 @@ data class WeatherEntityLocation(
 @Entity(tableName = "weather_current",
     foreignKeys = [ForeignKey(
         entity = WeatherEntityLocation::class,
-        parentColumns = ["name"],
-        childColumns = ["air_quality"],
+        parentColumns = ["id"],
+        childColumns = ["locationId"],
         onDelete = ForeignKey.CASCADE,
-        onUpdate = ForeignKey.CASCADE
-    )])
+        //onUpdate = ForeignKey.CASCADE
+    )]
+)
 data class WeatherEntityCurrent(
     @PrimaryKey(autoGenerate = true)
-    val id: Long,
+    val id: Long = 0,
+    val locationId: Long,
     val cloud: Int,
     val condition: Condition,
     val dewpoint_c: Double,
@@ -39,15 +41,15 @@ data class WeatherEntityCurrent(
     val gust_kph: Double,
     val gust_mph: Double,
     val heatindex_c: Double,
-    val heatindex_f: Int,
-    val humidity: Int,
-    val is_day: Int,
+    val heatindex_f: Double,
+    val humidity: Double,
+    val is_day: Double,
     val last_updated: String,
     val last_updated_epoch: Int,
-    val precip_in: Int,
-    val precip_mm: Int,
+    val precip_in: Double,
+    val precip_mm: Double,
     val pressure_in: Double,
-    val pressure_mb: Int,
+    val pressure_mb: Double,
     val temp_c: Double,
     val temp_f: Double,
     val uv: Double,

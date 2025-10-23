@@ -130,14 +130,13 @@ fun ScreenA(weatherViewModel: WeatherViewModel) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp), // Added more padding for better spacing
+            .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // 2. The search bar is now the first item inside the main Column
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp) // Better spacing
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             OutlinedTextField(
                 modifier = Modifier.weight(1f),
@@ -157,7 +156,6 @@ fun ScreenA(weatherViewModel: WeatherViewModel) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // 3. The content area is now the second item, placed below the search bar
         when (val result = weatherResult) {
             is NetworkResponse.Error -> {
                 Text(text = "Error: ${result.message}")
@@ -202,7 +200,7 @@ fun WeatherDetails(data: WeatherData) {
     Spacer(modifier = Modifier.height(16.dp))
     Row (modifier = Modifier, horizontalArrangement = Arrangement.SpaceBetween) {
         Text(
-            text = "${data.current.temp_c}°C", // Added the "C" for clarity
+            text = "${data.current.temp_c}°C",
             fontSize = 56.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
@@ -214,10 +212,8 @@ fun WeatherDetails(data: WeatherData) {
         )
     }
     Spacer(modifier = Modifier.height(16.dp))
-
-    // Weather Condition Text
     Text(
-        text = data.current.condition.text, // ✅ FIX: Show condition, not country
+        text = data.current.condition.text,
         fontSize = 22.sp,
         textAlign = TextAlign.Center
     )
