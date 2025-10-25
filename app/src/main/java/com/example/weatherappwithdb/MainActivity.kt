@@ -1,11 +1,9 @@
 package com.example.weatherappwithdb
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,28 +34,30 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModelProvider
 import coil.compose.AsyncImage
 import com.example.weatherappwithdb.core.apis.weatherApi.NetworkResponse
+import com.example.weatherappwithdb.core.database.room.WeatherBD.WeatherDAO
+import com.example.weatherappwithdb.core.database.room.WeatherBD.WeatherDatabase.Companion.getInstance
 import com.example.weatherappwithdb.core.models.weatherApiModel.WeatherData
-import com.example.weatherappwithdb.core.repositories.WeatherRepository
 import com.example.weatherappwithdb.core.repositories.WeatherRepositoryImpl
 import com.example.weatherappwithdb.core.viewmodels.WeatherViewModel
-import com.example.weatherappwithdb.core.viewmodels.WeatherViewModelFactory
 import com.example.weatherappwithdb.ui.theme.WeatherAppWithDBTheme
 
 class MainActivity : ComponentActivity() {
-    private val weatherViewModel: WeatherViewModel by viewModels {
-        WeatherViewModelFactory(WeatherRepositoryImpl())
-    }
+    private lateinit var weatherDAO: WeatherDAO
+    private lateinit var repositoryImpl: WeatherRepositoryImpl
+    private lateinit var viewModel: WeatherViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        weatherDAO = getInstance(this).weatherDao()
+        repositoryImpl = WeatherRepositoryImpl(weatherDAO)
+        viewModel = WeatherViewModel(repositoryImpl)
         setContent {
             //weatherViewModel = ViewModelProvider(this)[WeatherViewModel::class.java]
             WeatherAppWithDBTheme {
                 Surface(modifier = Modifier.padding()) {
-                    ScreenA(weatherViewModel)
+                    ScreenA(viewModel)
                 }
             }
         }
@@ -156,18 +156,16 @@ fun ScreenA(weatherViewModel: WeatherViewModel) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        when (val result = weatherResult) {
+
+        when (weatherResult) {
             is NetworkResponse.Error -> {
-                Text(text = "Error: ${result.message}")
+                Text(text = "Error: ${(weatherResult as NetworkResponse.Error).message}")
             }
             is NetworkResponse.Loading -> {
                 CircularProgressIndicator()
             }
             is NetworkResponse.Success -> {
-                WeatherDetails(result.data)
-            }
-            null -> {
-                Text(text = "Search a city to see the weather")
+                WeatherDetails((weatherResult as NetworkResponse.Success).data)
             }
         }
     }

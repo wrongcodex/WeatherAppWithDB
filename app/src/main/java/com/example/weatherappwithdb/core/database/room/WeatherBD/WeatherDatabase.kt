@@ -11,7 +11,7 @@ import androidx.room.TypeConverter
     version = 2,
     exportSchema = false
 )
-//@TypeConverter(Convertors())
+//@TypeConverter(Convertors::class.java)
 abstract class WeatherDatabase : RoomDatabase(){
     abstract fun weatherDao(): WeatherDAO
 
@@ -19,6 +19,7 @@ abstract class WeatherDatabase : RoomDatabase(){
         private var instance : WeatherDatabase? = null
 
         @Synchronized
+//        @Volatile
         fun getInstance(context: Context): WeatherDatabase{
             if (instance == null)
                 instance = Room.databaseBuilder(

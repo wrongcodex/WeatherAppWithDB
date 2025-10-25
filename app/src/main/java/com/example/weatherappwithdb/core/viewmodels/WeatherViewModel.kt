@@ -13,12 +13,12 @@ import kotlinx.coroutines.launch
 
 
 class WeatherViewModel(
-    private val repository : WeatherRepository
+    private val repository : WeatherRepositoryImpl
 ): ViewModel() {
 
 
-    private val _weather = MutableStateFlow<NetworkResponse<WeatherData>?>(null)
-    val weather: StateFlow<NetworkResponse<WeatherData>?> = _weather
+    private val _weather = MutableStateFlow<NetworkResponse<WeatherData>>(NetworkResponse.Loading)
+    val weather: StateFlow<NetworkResponse<WeatherData>> = _weather
     fun getData(city: String){
         viewModelScope.launch {
             _weather.value = repository.getWeatherByCity(city)

@@ -1,14 +1,17 @@
 package com.example.weatherappwithdb.core.database.room.WeatherBD
 
+import androidx.room.ColumnInfo
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import androidx.room.Relation
 import com.example.weatherappwithdb.core.models.weatherApiModel.Condition
 
 @Entity(tableName = "weather_table")
 data class WeatherEntityLocation(
     @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
+    @ColumnInfo("id")val id: Long = 0,
     val country: String,
     val lat: Double,
     val localtime: String,
@@ -22,8 +25,8 @@ data class WeatherEntityLocation(
 @Entity(tableName = "weather_current",
     foreignKeys = [ForeignKey(
         entity = WeatherEntityLocation::class,
-        parentColumns = ["id"],
-        childColumns = ["locationId"],
+        parentColumns = arrayOf("id"),
+        childColumns = arrayOf("locationId"),
         onDelete = ForeignKey.CASCADE,
         //onUpdate = ForeignKey.CASCADE
     )]
@@ -31,9 +34,8 @@ data class WeatherEntityLocation(
 data class WeatherEntityCurrent(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
-    val locationId: Long,
+    @ColumnInfo("locationId", index = true)val locationId: Long,
     val cloud: Int,
-    val condition: Condition,
     val dewpoint_c: Double,
     val dewpoint_f: Double,
     val feelslike_c: Double,
@@ -61,4 +63,13 @@ data class WeatherEntityCurrent(
     val wind_mph: Double,
     val windchill_c: Double,
     val windchill_f: Double
+)
+
+data class WeatherChildParent(
+    @Embedded val parent: WeatherEntityLocation,
+    @Relation(
+        parentColumn = "id",
+        entityColumn = "locationId"
+    )
+    val child: List<WeatherEntityCurrent>
 )
