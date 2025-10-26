@@ -14,20 +14,4 @@ import androidx.room.TypeConverter
 //@TypeConverter(Convertors::class.java)
 abstract class WeatherDatabase : RoomDatabase(){
     abstract fun weatherDao(): WeatherDAO
-
-    companion object{
-        private var instance : WeatherDatabase? = null
-
-        @Synchronized
-//        @Volatile
-        fun getInstance(context: Context): WeatherDatabase{
-            if (instance == null)
-                instance = Room.databaseBuilder(
-                    context.applicationContext,
-                    WeatherDatabase::class.java,
-                    "weather_database"
-                ).fallbackToDestructiveMigration(false).build()
-            return instance!!
-        }
-    }
 }

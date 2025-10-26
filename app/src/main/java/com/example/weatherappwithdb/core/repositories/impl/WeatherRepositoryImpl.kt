@@ -1,23 +1,24 @@
-package com.example.weatherappwithdb.core.repositories
+package com.example.weatherappwithdb.core.repositories.impl
 
 import android.util.Log
-import com.example.weatherappwithdb.core.apis.weatherApi.API_KEY.api_key
+import com.example.weatherappwithdb.core.apis.weatherApi.API_KEY
 import com.example.weatherappwithdb.core.apis.weatherApi.NetworkResponse
-import com.example.weatherappwithdb.core.apis.weatherApi.RetrofitInstance
+import com.example.weatherappwithdb.core.apis.weatherApi.services.WeatherApi
 import com.example.weatherappwithdb.core.database.room.WeatherBD.WeatherDAO
 import com.example.weatherappwithdb.core.database.room.WeatherBD.WeatherEntityCurrent
 import com.example.weatherappwithdb.core.database.room.WeatherBD.WeatherEntityLocation
-import com.example.weatherappwithdb.core.models.weatherApiModel.Current
-import com.example.weatherappwithdb.core.models.weatherApiModel.Location
 import com.example.weatherappwithdb.core.models.weatherApiModel.WeatherData
+import com.example.weatherappwithdb.core.repositories.repo.WeatherRepository
+import javax.inject.Inject
 
-class WeatherRepositoryImpl (
-    private val weatherDAO: WeatherDAO
-): WeatherRepository{
+class WeatherRepositoryImpl@Inject constructor(
+    private val weatherDao: WeatherDAO,
+    private val weatherApi: WeatherApi
+): WeatherRepository {
     //private val weatherApi: WeatherApi
-    private val weatherApi = RetrofitInstance.weatherApi
+
     override suspend fun getWeatherByCity(city: String): NetworkResponse<WeatherData> {
-        val response = weatherApi.getInstance(city, api_key)
+        val response = weatherApi.getInstance(city, API_KEY.api_key)
         return try {
             if (response.isSuccessful && response.body()!=null){
                 val data = response.body()!!
@@ -64,7 +65,7 @@ class WeatherRepositoryImpl (
                     windchill_c = data.current.windchill_c,
                     windchill_f = data.current.windchill_f
                 )
-                weatherDAO.insertWeatherLocationAndCurrent(
+                weatherDao.insertWeatherLocationAndCurrent(
                     location, current
                 )
                 NetworkResponse.Success(response.body()!!)

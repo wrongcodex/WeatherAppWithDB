@@ -5,15 +5,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherappwithdb.core.apis.weatherApi.NetworkResponse
 import com.example.weatherappwithdb.core.models.weatherApiModel.WeatherData
-import com.example.weatherappwithdb.core.repositories.WeatherRepository
-import com.example.weatherappwithdb.core.repositories.WeatherRepositoryImpl
+import com.example.weatherappwithdb.core.repositories.repo.WeatherRepository
+import com.example.weatherappwithdb.core.repositories.impl.WeatherRepositoryImpl
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
-class WeatherViewModel(
-    private val repository : WeatherRepositoryImpl
+@HiltViewModel
+class WeatherViewModel@Inject constructor(
+    private val weatherRepository: WeatherRepository
 ): ViewModel() {
 
 
@@ -21,7 +24,7 @@ class WeatherViewModel(
     val weather: StateFlow<NetworkResponse<WeatherData>> = _weather
     fun getData(city: String){
         viewModelScope.launch {
-            _weather.value = repository.getWeatherByCity(city)
+            _weather.value = weatherRepository.getWeatherByCity(city)
             Log.d("abcd", "getDataVM: ${_weather.value}")
         }
     }

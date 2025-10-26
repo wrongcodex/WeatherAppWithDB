@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,22 +38,21 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.weatherappwithdb.core.apis.weatherApi.NetworkResponse
 import com.example.weatherappwithdb.core.database.room.WeatherBD.WeatherDAO
-import com.example.weatherappwithdb.core.database.room.WeatherBD.WeatherDatabase.Companion.getInstance
 import com.example.weatherappwithdb.core.models.weatherApiModel.WeatherData
-import com.example.weatherappwithdb.core.repositories.WeatherRepositoryImpl
+import com.example.weatherappwithdb.core.repositories.impl.WeatherRepositoryImpl
 import com.example.weatherappwithdb.core.viewmodels.WeatherViewModel
 import com.example.weatherappwithdb.ui.theme.WeatherAppWithDBTheme
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private lateinit var weatherDAO: WeatherDAO
-    private lateinit var repositoryImpl: WeatherRepositoryImpl
-    private lateinit var viewModel: WeatherViewModel
+
+    private val viewModel by viewModels<WeatherViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        weatherDAO = getInstance(this).weatherDao()
-        repositoryImpl = WeatherRepositoryImpl(weatherDAO)
-        viewModel = WeatherViewModel(repositoryImpl)
         setContent {
             //weatherViewModel = ViewModelProvider(this)[WeatherViewModel::class.java]
             WeatherAppWithDBTheme {
